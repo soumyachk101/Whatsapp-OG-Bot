@@ -49,6 +49,10 @@ const socket = async () => {
 	const { version, isLatest } = await fetchLatestBaileysVersion();
 	console.log(`using WA v${version.join(".")}, isLatest: ${isLatest}\n`);
 
+	const primaryMyNumber = process.env.MY_NUMBER?.split(",")[0]?.trim();
+	const primaryBotNumber = process.env.BOT_NUMBER?.split(",")[0]?.trim();
+	const allowSelfCommands = !!primaryMyNumber && primaryMyNumber === primaryBotNumber;
+
 	// Cleanup previous auth state if exists (prevents memory leak on reconnect)
 	if (authStateCleanup) {
 		authStateCleanup();
@@ -95,7 +99,7 @@ const socket = async () => {
 		keepAliveIntervalMs: 30000,
 
 		browser: ["Ubuntu", "Chrome", "20.0.04"],
-		emitOwnEvents: false, // IMPORTANT
+		emitOwnEvents: allowSelfCommands,
 		retryRequestDelayMs: 150,
 		maxMsgRetryCount: 3,
 

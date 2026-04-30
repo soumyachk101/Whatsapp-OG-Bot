@@ -4,6 +4,10 @@ import getGroupEvent from "./getGroupEvent.js";
 import getCallEvent from "./getCallEvents.js";
 
 const events = async (sock, startSock, cache) => {
+	const primaryMyNumber = process.env.MY_NUMBER?.split(",")[0]?.trim();
+	const primaryBotNumber = process.env.BOT_NUMBER?.split(",")[0]?.trim();
+	const allowSelfCommands = !!primaryMyNumber && primaryMyNumber === primaryBotNumber;
+
 	sock.ev.process(async (event) => {
 		try {
 			if (event["messages.upsert"]) {
@@ -14,7 +18,7 @@ const events = async (sock, startSock, cache) => {
 							msg &&
 							msg.message &&
 							msg.key?.remoteJid &&
-							!msg.key.fromMe &&
+							(!msg.key.fromMe || allowSelfCommands) &&
 							Object.keys(msg.message).length > 0
 					);
 
