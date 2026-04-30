@@ -3,6 +3,7 @@ import makeWASocket from "baileys";
 import { fetchLatestBaileysVersion } from "baileys";
 import { useSQLiteAuthState } from "./useSQLiteAuthState.js";
 import P from "pino";
+import getAllowSelfCommands from "./getAllowSelfCommands.js";
 
 const logger = P({ level: "silent" }); // Set to "error" to allow essential logs but suppress debug spam
 
@@ -49,9 +50,7 @@ const socket = async () => {
 	const { version, isLatest } = await fetchLatestBaileysVersion();
 	console.log(`using WA v${version.join(".")}, isLatest: ${isLatest}\n`);
 
-	const primaryMyNumber = process.env.MY_NUMBER?.split(",")[0]?.trim();
-	const primaryBotNumber = process.env.BOT_NUMBER?.split(",")[0]?.trim();
-	const allowSelfCommands = !!primaryMyNumber && !!primaryBotNumber && primaryMyNumber === primaryBotNumber;
+	const allowSelfCommands = getAllowSelfCommands();
 
 	// Cleanup previous auth state if exists (prevents memory leak on reconnect)
 	if (authStateCleanup) {

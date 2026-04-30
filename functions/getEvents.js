@@ -2,11 +2,10 @@ import getConnectionUpdate from "./getConnectionUpdateEvent.js";
 import getCommand from "./getMessagesEvent.js";
 import getGroupEvent from "./getGroupEvent.js";
 import getCallEvent from "./getCallEvents.js";
+import getAllowSelfCommands from "./getAllowSelfCommands.js";
 
 const events = async (sock, startSock, cache) => {
-	const primaryMyNumber = process.env.MY_NUMBER?.split(",")[0]?.trim();
-	const primaryBotNumber = process.env.BOT_NUMBER?.split(",")[0]?.trim();
-	const allowSelfCommands = !!primaryMyNumber && !!primaryBotNumber && primaryMyNumber === primaryBotNumber;
+	const allowSelfCommands = getAllowSelfCommands();
 
 	sock.ev.process(async (event) => {
 		try {
