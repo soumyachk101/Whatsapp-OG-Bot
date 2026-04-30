@@ -51,7 +51,7 @@ const socket = async () => {
 
 	const primaryMyNumber = process.env.MY_NUMBER?.split(",")[0]?.trim();
 	const primaryBotNumber = process.env.BOT_NUMBER?.split(",")[0]?.trim();
-	const allowSelfCommands = !!primaryMyNumber && primaryMyNumber === primaryBotNumber;
+	const allowSelfCommands = !!primaryMyNumber && !!primaryBotNumber && primaryMyNumber === primaryBotNumber;
 
 	// Cleanup previous auth state if exists (prevents memory leak on reconnect)
 	if (authStateCleanup) {

@@ -6,7 +6,7 @@ import getCallEvent from "./getCallEvents.js";
 const events = async (sock, startSock, cache) => {
 	const primaryMyNumber = process.env.MY_NUMBER?.split(",")[0]?.trim();
 	const primaryBotNumber = process.env.BOT_NUMBER?.split(",")[0]?.trim();
-	const allowSelfCommands = !!primaryMyNumber && primaryMyNumber === primaryBotNumber;
+	const allowSelfCommands = !!primaryMyNumber && !!primaryBotNumber && primaryMyNumber === primaryBotNumber;
 
 	sock.ev.process(async (event) => {
 		try {
