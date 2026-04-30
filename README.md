@@ -271,8 +271,8 @@ Create a `.env` file in the project root with the following keys.
 | Variable         | Description                                                               |
 | ---------------- | ------------------------------------------------------------------------- |
 | `PREFIX`         | Bot command prefix. Default: `-`                                          |
-| `MY_NUMBER`      | Your WhatsApp number without `+` (owner number)                           |
-| `BOT_NUMBER`     | The WhatsApp number the bot is logged in as (without `+`), used to filter self-messages. If it matches `MY_NUMBER`, the bot will also accept commands sent from its own account. |
+| `MY_NUMBER`      | Your WhatsApp number digits only (no `+` or spaces) (owner number)         |
+| `BOT_NUMBER`     | The WhatsApp number the bot is logged in as, digits only (no `+` or spaces), used to filter self-messages. If it matches `MY_NUMBER` exactly, the bot will also accept commands sent from its own account. |
 | `MODERATORS`     | Comma-separated moderator numbers (e.g. `123,456`)                        |
 | `MONGODB_KEY`    | MongoDB connection string from [mongodb.com](https://www.mongodb.com)     |
 | `ADMIN_PASSWORD` | Password to log in to the React admin dashboard at `/admin`               |
