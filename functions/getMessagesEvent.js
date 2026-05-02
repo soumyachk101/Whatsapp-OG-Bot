@@ -6,7 +6,7 @@ import notifyOwner from "./getOwnerSend.js";
 import { readFileEfficiently } from "./fileUtils.js";
 
 const prefix = process.env.PREFIX;
-const moderatos = [...process.env.MODERATORS?.split(",")];
+const moderatos = process.env.MODERATORS?.split(",") || [];
 import getGroupAdmins from "./getGroupAdmins.js";
 import { stickerForward, forwardGroup } from "../functions/getStickerForward.js";
 import { createMembersData, getMemberData, member } from "../sqlite-DB/membersDataDb.js";
@@ -18,12 +18,12 @@ import { checkNSFW } from "./nsfwFilter.js";
 
 // These will be used for permission checks
 const myNumber = [
-	process.env.MY_NUMBER.split(",")[0] + "@s.whatsapp.net",
-	process.env.MY_NUMBER.split(",")[1] + "@lid",
+	(process.env.MY_NUMBER || "").split(",")[0] + "@s.whatsapp.net",
+	(process.env.MY_NUMBER || "").split(",")[1] + "@lid",
 ];
 const botNumber = [
-	process.env.BOT_NUMBER.split(",")[0] + "@s.whatsapp.net",
-	process.env.BOT_NUMBER.split(",")[1] + "@lid",
+	(process.env.BOT_NUMBER || "").split(",")[0] + "@s.whatsapp.net",
+	(process.env.BOT_NUMBER || "").split(",")[1] + "@lid",
 ];
 
 // Cached tag sticker - loaded once at startup
