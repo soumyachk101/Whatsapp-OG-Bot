@@ -1,4 +1,7 @@
 import axios from "axios";
+import { fileTypeFromBuffer } from "file-type";
+
+const AUDIO_TYPE_DETECTION_BYTES = 4100;
 
 const handler = async (sock, msg, from, args, msgInfoObj) => {
 	const { prefix, sendMessageWTyping, evv, content } = msgInfoObj;
@@ -99,13 +102,20 @@ const handler = async (sock, msg, from, args, msgInfoObj) => {
 			buffer = Buffer.from(response.data);
 		}
 
+		const detectionBuffer =
+			buffer.length > AUDIO_TYPE_DETECTION_BYTES ? buffer.subarray(0, AUDIO_TYPE_DETECTION_BYTES) : buffer;
+		const detectedType = await fileTypeFromBuffer(detectionBuffer);
+		const mimeType = detectedType?.mime ?? "audio/mpeg";
+		const fileExtension = detectedType?.ext ?? "mp3";
+		const isOpusAudio = mimeType.includes("opus") || fileExtension === "opus";
+
 		await sock.sendMessage(
 			from,
 			{
 				audio: buffer,
-				mimetype: "audio/mp4", // Most compatible for WhatsApp voice notes
-				ptt: true,
-				fileName: "voice.mp4",
+				mimetype: mimeType,
+				ptt: isOpusAudio,
+				fileName: `voice.${fileExtension}`,
 			},
 			{ quoted: msg }
 		);
