@@ -1,6 +1,8 @@
 import axios from "axios";
 import { fileTypeFromBuffer } from "file-type";
 
+const AUDIO_TYPE_DETECTION_BYTES = 4100;
+
 const handler = async (sock, msg, from, args, msgInfoObj) => {
 	const { prefix, sendMessageWTyping, evv, content } = msgInfoObj;
 	let lang = "en";
@@ -100,10 +102,10 @@ const handler = async (sock, msg, from, args, msgInfoObj) => {
 			buffer = Buffer.from(response.data);
 		}
 
-		const detectedType = await fileTypeFromBuffer(buffer.subarray(0, 4100));
+		const detectedType = await fileTypeFromBuffer(buffer.subarray(0, AUDIO_TYPE_DETECTION_BYTES));
 		const mimeType = detectedType?.mime ?? "audio/mpeg";
 		const fileExtension = detectedType?.ext ?? "mp3";
-		const isVoiceNote = mimeType.startsWith("audio/ogg") || mimeType.includes("opus");
+		const isVoiceNote = mimeType.includes("opus") || fileExtension === "opus";
 
 		await sock.sendMessage(
 			from,
