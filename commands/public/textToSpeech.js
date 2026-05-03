@@ -100,10 +100,10 @@ const handler = async (sock, msg, from, args, msgInfoObj) => {
 			buffer = Buffer.from(response.data);
 		}
 
-		const detectedType = await fileTypeFromBuffer(buffer);
+		const detectedType = await fileTypeFromBuffer(buffer.subarray(0, 4100));
 		const mimeType = detectedType?.mime ?? "audio/mpeg";
 		const fileExtension = detectedType?.ext ?? "mp3";
-		const isVoiceNote = mimeType === "audio/ogg" || mimeType === "audio/opus";
+		const isVoiceNote = mimeType.startsWith("audio/ogg") || mimeType.includes("opus");
 
 		await sock.sendMessage(
 			from,
