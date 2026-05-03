@@ -102,19 +102,19 @@ const handler = async (sock, msg, from, args, msgInfoObj) => {
 			buffer = Buffer.from(response.data);
 		}
 
-		const detectionBytes = Math.min(buffer.length, AUDIO_TYPE_DETECTION_BYTES);
-		const detectedType = await fileTypeFromBuffer(buffer.subarray(0, detectionBytes));
+		const detectionBuffer =
+			buffer.length > AUDIO_TYPE_DETECTION_BYTES ? buffer.subarray(0, AUDIO_TYPE_DETECTION_BYTES) : buffer;
+		const detectedType = await fileTypeFromBuffer(detectionBuffer);
 		const mimeType = detectedType?.mime ?? "audio/mpeg";
 		const fileExtension = detectedType?.ext ?? "mp3";
 		const isOpusAudio = mimeType.includes("opus") || fileExtension === "opus";
-		const isVoiceNote = isOpusAudio;
 
 		await sock.sendMessage(
 			from,
 			{
 				audio: buffer,
 				mimetype: mimeType,
-				ptt: isVoiceNote,
+				ptt: isOpusAudio,
 				fileName: `voice.${fileExtension}`,
 			},
 			{ quoted: msg }
