@@ -1,4 +1,5 @@
 import axios from "axios";
+import { fileTypeFromBuffer } from "file-type";
 
 const handler = async (sock, msg, from, args, msgInfoObj) => {
 	const { prefix, sendMessageWTyping, evv, content } = msgInfoObj;
@@ -99,13 +100,18 @@ const handler = async (sock, msg, from, args, msgInfoObj) => {
 			buffer = Buffer.from(response.data);
 		}
 
+		const detectedType = await fileTypeFromBuffer(buffer);
+		const mimeType = detectedType?.mime ?? "audio/mpeg";
+		const fileExtension = detectedType?.ext ?? "mp3";
+		const isVoiceNote = mimeType === "audio/ogg" || mimeType === "audio/opus";
+
 		await sock.sendMessage(
 			from,
 			{
 				audio: buffer,
-				mimetype: "audio/mp4", // Most compatible for WhatsApp voice notes
-				ptt: true,
-				fileName: "voice.mp4",
+				mimetype: mimeType,
+				ptt: isVoiceNote,
+				fileName: `voice.${fileExtension}`,
 			},
 			{ quoted: msg }
 		);
