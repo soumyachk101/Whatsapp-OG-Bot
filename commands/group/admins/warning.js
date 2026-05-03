@@ -5,8 +5,8 @@ import { extractPhoneNumber } from "../../../functions/lidUtils.js";
 import { config } from "dotenv";
 config();
 const myNumber = [
-	process.env.MY_NUMBER.split(",")[0] + "@s.whatsapp.net",
-	process.env.MY_NUMBER.split(",")[1] + "@lid",
+	(process.env.MY_NUMBER ? process.env.MY_NUMBER.split(",")[0] : "0") + "@s.whatsapp.net",
+	(process.env.MY_NUMBER && process.env.MY_NUMBER.includes(",") ? process.env.MY_NUMBER.split(",")[1] : "0") + "@lid",
 ];
 const handler = async (sock, msg, from, args, msgInfoObj) => {
 	let { command, groupAdmins, sendMessageWTyping, botNumber } = msgInfoObj;

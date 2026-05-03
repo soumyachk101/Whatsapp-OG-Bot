@@ -8,7 +8,7 @@ const getRandom = (ext) => {
 	return `${Math.floor(Math.random() * 10000)}${ext}`;
 };
 
-const client = new TwitterApi(process.env.TWITTER_BEARER_TOKEN);
+const client = new TwitterApi(process.env.TWITTER_BEARER_TOKEN || "");
 
 const handler = async (sock, msg, from, args, msgInfoObj) => {
 	const { evv, sendMessageWTyping } = msgInfoObj;

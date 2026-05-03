@@ -18,12 +18,12 @@ import { checkNSFW } from "./nsfwFilter.js";
 
 // These will be used for permission checks
 const myNumber = [
-	(process.env.MY_NUMBER || "").split(",")[0] + "@s.whatsapp.net",
-	(process.env.MY_NUMBER || "").split(",")[1] + "@lid",
+	(process.env.MY_NUMBER ? process.env.MY_NUMBER.split(",")[0] : "0") + "@s.whatsapp.net",
+	(process.env.MY_NUMBER && process.env.MY_NUMBER.includes(",") ? process.env.MY_NUMBER.split(",")[1] : "0") + "@lid",
 ];
 const botNumber = [
-	(process.env.BOT_NUMBER || "").split(",")[0] + "@s.whatsapp.net",
-	(process.env.BOT_NUMBER || "").split(",")[1] + "@lid",
+	(process.env.BOT_NUMBER ? process.env.BOT_NUMBER.split(",")[0] : "0") + "@s.whatsapp.net",
+	(process.env.BOT_NUMBER && process.env.BOT_NUMBER.includes(",") ? process.env.BOT_NUMBER.split(",")[1] : "0") + "@lid",
 ];
 
 // Cached tag sticker - loaded once at startup

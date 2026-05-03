@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 const myNumber = [
-	process.env.MY_NUMBER.split(",")[0] + "@s.whatsapp.net",
-	process.env.MY_NUMBER.split(",")[1] + "@lid",
+	(process.env.MY_NUMBER ? process.env.MY_NUMBER.split(",")[0] : "0") + "@s.whatsapp.net",
+	(process.env.MY_NUMBER && process.env.MY_NUMBER.includes(",") ? process.env.MY_NUMBER.split(",")[1] : "0") + "@lid",
 ];
 import { member } from "../../sqlite-DB/membersDataDb.js";
 import { extractPhoneNumber, normalizeJID } from "../../functions/lidUtils.js";
