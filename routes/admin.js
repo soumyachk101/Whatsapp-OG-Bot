@@ -9,6 +9,16 @@ const router = Router();
 
 const pairingRateLimit = new Map();
 const PAIRING_RATE_LIMIT_MS = 30_000;
+const PAIRING_RATE_LIMIT_SWEEP_MS = 5 * 60_000;
+let lastPairingSweep = 0;
+
+function sweepPairingRateLimit(now) {
+	if (now - lastPairingSweep < PAIRING_RATE_LIMIT_SWEEP_MS) return;
+	for (const [ip, timestamp] of pairingRateLimit.entries()) {
+		if (now - timestamp >= PAIRING_RATE_LIMIT_MS) pairingRateLimit.delete(ip);
+	}
+	lastPairingSweep = now;
+}
 
 // ── Auth middleware ────────────────────────────────────────────────────────────
 export function requireAdmin(req, res, next) {
@@ -32,16 +42,16 @@ router.post("/api/pair", async (req, res) => {
 	if (!phoneNumber) return res.status(400).json({ error: "Phone number required." });
 
 	const now = Date.now();
-	const requester = req.ip;
+	sweepPairingRateLimit(now);
+	const forwardedFor = req.headers["x-forwarded-for"];
+	const forwardedIp = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor?.split(",")[0]?.trim();
+	const requester = forwardedIp || req.ip;
 	const lastRequest = pairingRateLimit.get(requester);
 	if (lastRequest && now - lastRequest < PAIRING_RATE_LIMIT_MS) {
 		const waitSeconds = Math.ceil((PAIRING_RATE_LIMIT_MS - (now - lastRequest)) / 1000);
 		return res.status(429).json({ error: `Too many pairing requests. Try again in ${waitSeconds}s.` });
 	}
 	pairingRateLimit.set(requester, now);
-	setTimeout(() => {
-		if (pairingRateLimit.get(requester) === now) pairingRateLimit.delete(requester);
-	}, PAIRING_RATE_LIMIT_MS);
 
 	const sock = req.app.locals.sock;
 	if (!sock) return res.status(503).json({ error: "Bot is not ready yet. Try again in a moment." });
