@@ -7,6 +7,9 @@ import mdClient from "../sqlite.js";
 
 const router = Router();
 
+const pairingRateLimit = new Map();
+const PAIRING_RATE_LIMIT_MS = 30_000;
+
 // ── Auth middleware ────────────────────────────────────────────────────────────
 export function requireAdmin(req, res, next) {
 	if (req.session && req.session.isAdmin) return next();
@@ -27,6 +30,18 @@ router.get("/api/status", (req, res) => {
 router.post("/api/pair", async (req, res) => {
 	const { phoneNumber } = req.body;
 	if (!phoneNumber) return res.status(400).json({ error: "Phone number required." });
+
+	const now = Date.now();
+	const requester = req.ip;
+	const lastRequest = pairingRateLimit.get(requester);
+	if (lastRequest && now - lastRequest < PAIRING_RATE_LIMIT_MS) {
+		const waitSeconds = Math.ceil((PAIRING_RATE_LIMIT_MS - (now - lastRequest)) / 1000);
+		return res.status(429).json({ error: `Too many pairing requests. Try again in ${waitSeconds}s.` });
+	}
+	pairingRateLimit.set(requester, now);
+	setTimeout(() => {
+		if (pairingRateLimit.get(requester) === now) pairingRateLimit.delete(requester);
+	}, PAIRING_RATE_LIMIT_MS);
 
 	const sock = req.app.locals.sock;
 	if (!sock) return res.status(503).json({ error: "Bot is not ready yet. Try again in a moment." });
