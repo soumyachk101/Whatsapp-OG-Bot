@@ -180,7 +180,7 @@ The dashboard (`dashboard/`) is a React + Vite app. During development you can r
 
 ## WhatsApp Login via Pairing Code
 
-The bot supports **pairing-code authentication** through the admin dashboard — no QR code scanning needed.
+The bot supports **pairing-code authentication** through the admin dashboard (or the public login page at `/`) — no QR code scanning needed.
 
 ### Steps to authenticate
 
