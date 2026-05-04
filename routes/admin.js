@@ -43,9 +43,7 @@ router.post("/api/pair", async (req, res) => {
 
 	const now = Date.now();
 	sweepPairingRateLimit(now);
-	const forwardedFor = req.headers["x-forwarded-for"];
-	const forwardedIp = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor?.split(",")[0]?.trim();
-	const requester = forwardedIp || req.ip;
+	const requester = req.ip;
 	const lastRequest = pairingRateLimit.get(requester);
 	if (lastRequest && now - lastRequest < PAIRING_RATE_LIMIT_MS) {
 		const waitSeconds = Math.ceil((PAIRING_RATE_LIMIT_MS - (now - lastRequest)) / 1000);
