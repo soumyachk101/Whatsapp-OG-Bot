@@ -43,7 +43,7 @@ router.post("/api/pair", async (req, res) => {
 
 	const now = Date.now();
 	sweepPairingRateLimit(now);
-	const requester = req.ip;
+	const requester = req.socket?.remoteAddress || req.ip;
 	const lastRequest = pairingRateLimit.get(requester);
 	if (lastRequest && now - lastRequest < PAIRING_RATE_LIMIT_MS) {
 		const waitSeconds = Math.ceil((PAIRING_RATE_LIMIT_MS - (now - lastRequest)) / 1000);
